@@ -1,0 +1,31 @@
+name: Branch Echo Trigger
+
+on:
+  # Run manually via the GitHub UI "Run workflow" button
+  workflow_dispatch:
+  # Run automatically every day at 00:00 UTC
+  schedule:
+    - cron: "0 0 * * *"
+
+# actions: write is required to dispatch another workflow via gh workflow run
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  echo-and-trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo current branch
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: echo "Current branch is $BRANCH"
+
+      - name: Trigger downstream workflow on main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh workflow run branch-echo.yml \
+            --ref main \
+            --repo "$REPO"

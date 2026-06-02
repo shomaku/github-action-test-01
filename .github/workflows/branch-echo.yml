@@ -1,0 +1,17 @@
+name: Branch Echo
+
+on:
+  # Triggered by Branch Echo workflow (or manually)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Confirm downstream execution
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: echo "Downstream workflow triggered on $BRANCH"
